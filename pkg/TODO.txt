@@ -1,0 +1,25 @@
+In RMLink:
+==========
+
+* Expose directory methods in Mesquite to R (for example, list all
+  algorithms (i.e., classes) that will operate on a tree and a
+  character, ideally with a short description).
+
+* Expose directory methods for inquiring about installed packages.
+
+In Mesquite:
+============
+
+* Register location of headless Mesquite in preferences directory.
+
+In R:
+=====
+
+* Try to obtain Mesquite location in a more automated fashion.
+** More or less done. Refinement pending to Mesquite writing its home
+   into a file that can distinguish between headless and awt.
+
+* Ancestral state reconstruction.
+** Should be done, but needs testing.
+
+* Method to convert state matrix from Java to R
