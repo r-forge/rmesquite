@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>RMesquite</title>
+<style type="text/css">
+<!--
+.style1 {	font-family: Arial, Helvetica, sans-serif;
+	font-size: x-large;
+}
+.style3 {	font-size: medium;
+	font-style: italic;
+}
+.style4 {font-family: Arial, Helvetica, sans-serif}
+.style5 {font-size: x-large}
+-->
+</style>
+</head>
+
+<body>
+<table width="100%" cellspacing="8">
+  <tr>
+    <td width="300" class="style4"><img src="images/splash.gif" alt="logo" width="164" height="64"></td>
+    <td width="100%" bgcolor="#6C6252" class="style4"><p class="style5">&nbsp;</p></td>
+  </tr>
+</table>
+<h1 class="style1">RMesquite package for R&nbsp;&nbsp;</h1>
+<p class="style1"><span class="style3">Hilmar Lapp &amp; Wayne Maddison</span></p>
+<p class="style4">The <em><strong>RMesquite</strong></em> package provides basic services for R to make use of functions in the evolutionary analysis system Mesquite. With <em>RMesquite</em>, R users can have access to the interactive interface of Mesquite as well as a broad array of computations in Mesquite. </p>
+<h3 class="style4">Installation</h3>
+<p class="style4">To use RMesquite you must:</p>
+<ul class="style4">
+  <li>In R, install <strong>RMesquite</strong> from CRAN as you normally install R packages. RMesquite depends on the packages rJava and ape.</li>
+  <li>Install Mesquite 2.72 or later (<a href="http://mesquiteproject.org">http://mesquiteproject.org</a>)</li>
+</ul>
+<h3 class="style4">Starting Mesquite</h3>
+<p class="style4">Before using functions of Mesquite, start it using startMesquite:</p>
+<pre class="style4">&gt; library(RMesquite) 
+&gt; startMesquite() </pre>
+
+<p class="style4">This simple style of starting Mesquite will work only if you have previously started your copy of Mesquite. If you have, then Mesquite will have recorded its location in its preferences file, and RMesquite will look there to discover where Mesquite is. If you haven't started Mesquite previously, then you will need to indicate the location of the Mesquite copy you want to run:</p>
+<pre class="style4">&gt; library(RMesquite) 
+&gt; startMesquite(&quot;/Applications/Mesquite_Folder&quot;) </pre>
+<p class="style4">If you want to run a headless version of Mesquite (see below), you need to either specify its location, or you need to have previously run the headless version and then indicate RMesquite is to look for it by setting headless to TRUE:</p>
+<pre class="style4">&gt; library(RMesquite) 
+&gt; startMesquite(headless = TRUE) </pre>
+<p class="style4">See the R help page for startMesquite for more details.</p>
+<h3 class="style4">Headless versus Graphical Mesquite</h3>
+<p class="style4">You can call from R either  the normal graphical version of Mesquite, or  a headless version of Mesquite. If you want to have access to Mesquite's windows, you need to use its graphical version. If you want to use only non-graphical calculations in Mesquite, you can use either version. See the section on Starting Mesquite for how to specify which version to use.</p>
+<p class="style4"><em>Note for Mac OS X users</em>: If you want to use  the graphical version of Mesquite on Mac OS X 10.5 or later then you must start R using the GUI application <a href="http://jgr.markushelbig.org/JGR.html">JGR</a> application for running R. Conversely, if you want to use the normal R GUI application or R from the Terminal on Mac OS X, then you must use the headless version of Mesquite. (This is not in our control; this restriction is due to a constraints in OS X and R.)</p>
+<h3 class="style4">Troubles?</h3>
+<p class="style4">If starting up <span class="style4">Mesquite fails, then here are some possible problems:</span></p>
+<ul class="style4">
+  <li><strong>java.lang.NoClassDefFoundError</strong> — probably indicates you haven't indicated the correct path to Mesquite_Folder, or you haven't started that version of Mesquite on its own recently. Make sure that you indicate the path to Mesquite_Folder, or that before starting R you've started and closed Mesquite separately. When Mesquite starts up, it records its location in a preferences file so that R can find it.</li>
+  <li><strong>Mac OS X only: &quot;Sorry, you need to be running R from JGR when starting up a graphical version of Mesquite on Mac OS X.&quot;</strong> — This indicates you tried to start the graphical version of Mesquite from the normal version of the R GUI application or from the command line on OS X. If you want to use the graphical version of Mesquite from R on Mac OS X, you need to run R from the alternative <a href="http://jgr.markushelbig.org/JGR.html">JGR</a> application.</li>
+  <li><strong>Mac OS X only: java.lang.InternalError: Can't start the AWT because Java was started on the first thread</strong>. This also indicates you tried to start the graphical version of Mesquite from the normal version of the R GUI application or from the command line on OS X. If you want to use the graphical version of Mesquite from R on Mac OS X, you need to run R from the alternative <a href="http://jgr.markushelbig.org/JGR.html">JGR</a> application.</li>
+</ul>
+<h3 class="style4"><span class="style4">Example: Using Mesquite to edit a tree fro</span>m R</h3>
+<p class="style4">To send a phylogenetic tree (of type phylo) to Mesquite to be edited by hand, call editTree:</p>
+<pre class="style4">&gt; modifiedTree &lt;- editTree(myTree)</pre>
+<p class="style4">Mesquite will display the tree. Edit the tree as you wish using Mesquite's tools, then hit the &quot;Done&quot; button to send the modified tree back to R. The tree window in Mesquite will close. (If you want it to persist, use a combination of showTree(tree) to show the tree in Mesquite and then getTreeInWindow() to retrieve it.)</p>
+<h3 class="style4">Example: Getting a matrix from Mesquite</h3>
+<p class="style4">After starting Mesquite from R, you can go to Mesquite and use the File&gt;Open File... menu item to open a data file within Mesquite. Bring a character matrix window to the front, and then go back to R to call getMatrixInWindow:</p>
+<pre class="style4">&gt; mesquiteMatrix &lt;- getMatrixInWindow()</pre>
+<p class="style4">This is obtained as a java object, but you can convert it into a normal R matrix using <em>as.matrix</em>.</p>
+<h3 class="style4">Source Code</h3>
+<p class="style4">Source code of RMesquite is available at R Forge.</p>
+<h3 class="style4">Citation</h3>
+<p class="style4">If you make use of Mesquite for the analysis of results, such as to estimate ancestral states, then you should cite the functions in Mesquite. Thus, we suggest a citation like this: &quot;The &lt;insert analysis name here&gt; analysis was performed by Mesquite 2.72 (Maddison &amp; Maddison, 2009), run via the RMesquite package (Lapp &amp; Maddison, 2009) from R version 2.10.0.&quot; </p>
+<p class="style4">Lapp, H. &amp; Maddison, W.P. 2009. RMesquite, an R package for transparent access to Mesquite functions. http://mesquiteproject.org/packages/Mesquite.R</p>
+<h2 class="style4">Credits</h2>
+<p class="style4">RMesquite and <em>Mesquite.R</em> were stimulated by the <a href="http://www.nescent.org/wg_phyloinformatics/R_Hackathon_1">R Hackathon at NESCENT in 2007</a>, supported by the National Evolutionary Synthesis Center (NESCent), NSF #EF-0423641.</p>
+<p><span class="style4">RMesquite is distributed under a <a href="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html">GPL version 2 license</a>.</span></p>
+<p><span class="style4"></span></p>
+<p class="style4"></p>
+<h3 class="style4">&nbsp;</h3>
+</body>
+</html>
