@@ -1,7 +1,12 @@
 #========================== Basic Mesquite functions =========================
 
 #==== Trying to determine the location of Mesquite
-mesquite.classpath <- function() {
+#Behaviour should be (but isn't yet) as follows:
+# If headless is not specified, then look to <mesquitePath> in the preferences file.  
+#      If this mesquitePath is blank, then use mesquiteHeadlessPath instead
+# If headless is false, then use mesquitePath
+# otherwise use mesquiteHeadlessPath 
+mesquite.classpath <- function(headless = FALSE) {
   # default location is $HOME/Mesquite_Support_Files
   home.dir <- if (.Platform$OS.type == "windows")
     Sys.getenv("HOMEPATH") else Sys.getenv("HOME");
@@ -9,12 +14,12 @@ mesquite.classpath <- function() {
                            .Platform$file.sep,"Mesquite_Support_Files",
                            .Platform$file.sep,"Mesquite_Prefs",
                            sep="");
-  # for now the only place we have to look into is the Mesquite log,
-  # so it has to have been fired up at least once, and it must have
-  # been the headless version that was fired up last.
+  # for now the only place we have to look into is the Mesquite preferences file,
+  # so it has to have been fired up at least once.
   con <- file(paste(mesqu.prefs.dir,.Platform$file.sep,"Mesquite.xml",sep=""),
               open="r");
   l <- readLines(con,n=1);
+  if (headless){
   while((length(l) > 0) && (length(grep("<mesquiteHeadlessPath>",l)) == 0)) {
     l <- readLines(con,n=1);
   }
@@ -25,22 +30,55 @@ mesquite.classpath <- function() {
              l);
     return(sub("\\./","",p));
   }
+  }
+  else {
+   while((length(l) > 0) && (length(grep("<mesquitePath>",l)) == 0)) {
+    l <- readLines(con,n=1);
+  }
+  close(con);
+  if (length(l) > 0) {
+    p <- sub(".*<mesquitePath>([^<]+)</mesquitePath>.*",
+             "\\1",
+             l);
+    return(sub("\\./","",p));
+  }
+  }
   character(0);
 }
 
-# ==== Starts up Mesquite.  Expensive; should be done once before
+
+# ==== Starts up Mesquite.  Expensive; should be done once before 
 # calling Mesquite functions.
-startMesquite <- function(cp){
-  if (missing(cp)) {
-    cp <- mesquite.classpath();
+startMesquite <- function(cp, showWindows = TRUE, headless = FALSE){
+  	assign(".mesquite.GUIAvailable",showWindows && !headless,pos="package:RMesquite");
+  if (!headless && !(exists(".jgr.works") && .jgr.works) && (.Platform$OS.type == "unix" && system("uname",intern=TRUE) == "Darwin")){
+ 	print("If the version of Mesquite you are attempting to start is the normal graphical version, this command will not work. On Mac OS X, you cannot run the graphical version of Mesquite when running R from the normal GUI R app or the Terminal.  You need to use JGR to run R, or you need to use the headless version of Mesquite."); 
+  
   }
-  if ((!is.null(cp)) && length(cp) > 0) {
-    .jaddClassPath(cp);
+  if (is.null(.mesquite.Runner)) {
+ 	 if (missing(cp)) {
+ 	   cp <- mesquite.classpath(headless);
+ 	 }
+ 	 if ((!is.null(cp)) && length(cp) > 0) {
+  	  .jaddClassPath(cp);
+  	}
+ 	# .jpackage("mesquite.R")
+  	print("Starting Mesquite.  If any problems arise please see help file or http://mesquiteproject.org/packages/Mesquite.R/RMesquite.html");
+  	print(cp);
+  	tryCatch ({
+  	mesquite.Runner <- .jnew("mesquite/R/RCallsMesquite/lib/MesquiteRunner")
+  	}, finally = {
+  	if (is.null(mesquite.Runner)) print("NOTE: Make sure you have started a copy of Mesquite previously, and that the last copy started has Mesquite.R installed.  Also, if using Mac OS X, either use JGR for running R, or use a headless version of Mesquite.")
+  	});
+  	assign(".mesquite.Runner",mesquite.Runner,pos="package:RMesquite");
+
+	invisible(.jcall(mesquite.Runner, "Lmesquite/Mesquite;", "startMesquite", showWindows));
+		
   }
-  mesquite.Runner <- .jnew("mesquite/rmLink/rCallsM/MesquiteRunner");
-  assign(".mesquite.Runner",mesquite.Runner,pos="package:RMesquite");
-  invisible(.jcall(mesquite.Runner, "Lmesquite/Mesquite;", "startMesquite"));
-}
+  else {
+  	print("Mesquite already started");
+  }
+ }
 
 # ==== Returns the passed variable if provided and not null, and
 # otherwise returns the cached instance of the Mesquite runner
@@ -49,6 +87,14 @@ startMesquite <- function(cp){
     RMesquite::.mesquite.Runner
   else
     mesquite;
+}
+
+# ==== Stops Mesquite 
+stopMesquite <- function(){
+  .jcall(.mesquite(),
+                   "V",
+                   "stopMesquite");
+  assign(".mesquite.Runner",NULL,pos="package:RMesquite");
 }
 
 # ==== Starts Mesquite module of given class.  E.g.,
@@ -66,6 +112,18 @@ startMesquiteModule <- function(className, script=NULL){
                    "startModule",
                    className,
                    script);
+  module
+}
+# ==== Starts Mesquite module of given duty class.  E.g.,
+# a number for character and tree should be indicated by
+# "NumberForCharAndTree". This module
+# itself may hire other modules and so forth. 
+# The expectation is that Mesquite's UI will decide what module to hire
+startMesquiteModuleOfDutyClass <- function(dutyClass, constraint){
+  module <- .jcall(.mesquite(),
+                   "Lmesquite/lib/MesquiteModule;",
+                   "startModuleOfDutyClass",
+                   dutyClass, constraint);
   module
 }
 
@@ -123,5 +181,15 @@ getCommands <- function(module){
 showCommands <- function(module){
 	c <- getCommands(module)
 	cat(c,sep="\n")
+}
+
+#==== Sets Mesquite to interactive mode
+setInteractive <- function(interactive){
+  com <- .jcall(.mesquite(),
+				"V", 
+				"setInteractive",
+				interactive);
+
+  com
 }
 

@@ -1,7 +1,9 @@
 .First.lib <- function(lib,pkg) {
   require(rJava);
+  require(ape);
+  assign(".mesquite.Runner",NULL,pos="package:RMesquite");
   op <- options();
-  options(java.parameters=c("-Djava.awt.headless=true",op$java.parameters));
+  options(java.parameters=c("",op$java.parameters));
   .jpackage(pkg);
   options(op); # restore what we found
 }

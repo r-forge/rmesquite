@@ -1,4 +1,4 @@
-In RMLink:
+In RLink:
 ==========
 
 * Expose directory methods in Mesquite to R (for example, list all
@@ -23,3 +23,35 @@ In R:
 ** Should be done, but needs testing.
 
 * Method to convert state matrix from Java to R
+
+
+
+To build, cd into workspace directory.  Then:  sudo R CMD INSTALL RMesquite
+
+
+
+#run this script, e.g. using source("~/example.txt")
+
+mer <- getMatrixInWindow()
+rmer <- as.matrix(mer)
+
+library(RMesquite)
+startMesquite()
+data(bird.families)
+birds <- mesquiteTree(tree = bird.families)
+
+birds2 <- editTree(birds)
+tree.returned <- as.phylo(birds2)
+
+plot(tree.returned)
+tree.tosend <- as.phylo(birds)
+plot(tree.tosend)
+========
+
+library(RMesquite)
+startMesquite()
+tree <- getTreeInWindow()
+tp <- as.phylo(tree)
+matrix <- getMatrixInWindow()
+m <- as.matrix(matrix)
+a <- ancestralStatesCategorical(tp, m, method="ML", charIndex=1)

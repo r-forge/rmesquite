@@ -1,0 +1,13 @@
+#run this script, e.g. using source("~/example.txt")
+
+library(RMesquite)
+startMesquite()
+data(bird.families)
+birds <- mesquiteTree(tree = bird.families)
+
+birds2 <- editTree(birds)
+tree.returned <- as.phylo(birds2)
+
+plot(tree.returned)
+tree.tosend <- as.phylo(birds)
+plot(tree.tosend)

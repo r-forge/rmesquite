@@ -1,6 +1,6 @@
 Package: RMesquite
-Version: 0.1-1
-Date: 2007-12-11
+Version: 0.5
+Date: 2009-12-03
 Title: Wrapper for Mesquite methods in R
 Author: Hilmar Lapp <hlapp@gmx.net>, and Wayne Maddison <wmaddisn@interchange.ubc.ca>.
 Maintainer: Hilmar Lapp <hlapp@gmx.net>
@@ -11,3 +11,5 @@ Description: Provides a transparent wrapper for Mesquite functions in
     Java. Mesquite is available from http://mesquiteproject.org.
 License: GPL (>= 2)
 URL: http://phyloc.r-forge.r-project.org, http://mesquiteproject.org
+Packaged: 2009-12-03; wmaddisn
+

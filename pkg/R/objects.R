@@ -146,12 +146,15 @@ from.CharacterMatrix <- function(obj,
   if (class(obj) != "jobjRef") {
     stop("need to pass java object reference, not ",class(obj));
   }
-  charM <- .jnew("mesquite/rmLink/common/RCharacterData",
+  charM <- .jnew("mesquite/R/common/RCharacterData",
                  .jcast(obj,"mesquite/lib/characters/CharacterData"));
   col.names <- .jcall(charM, "[Ljava/lang/String;","getColumnNames");
   row.names <- .jcall(charM, "[Ljava/lang/String;","getRowNames");
   states <- vector();
   if (class.name == "ContinuousData") {
+    states <- .jcall(charM, "[D","asDoubleMatrix");
+  } 
+   else if (class.name == "MeristicData") {
     states <- .jcall(charM, "[D","asDoubleMatrix");
   } else {
     states <- .jcall(charM, "[Ljava/lang/String;","asStringMatrix");
@@ -174,7 +177,7 @@ as.matrix.jobjRef <- function(from) {
   if (cl.name == "RNumericMatrix") {
     return(from.RNumericMatrix(from));
   }
-  if (cl.name %in% c("CategoricalData","ContinuousData","DNAData")) {
+  if (cl.name %in% c("CategoricalData","ContinuousData","DNAData","MeristicData")) {
     return(from.CharacterMatrix(from,class.name=cl.name));
   }
   stop("currently not supported for objects of class ",.jclassOf(from));
@@ -187,7 +190,7 @@ as.phylo.jobjRef <- function(from) {
   mRoot <- .jcall(from,"I","getRoot");
   numNodes <- .jcall(from,"I","numberOfNodesInClade",mRoot);
   numTerminals <- .jcall(from,"I","numberOfTerminalsInClade",mRoot);
-  mAPE <- .jnew("mesquite/rmLink/common/APETree",
+  mAPE <- .jnew("mesquite/R/common/APETree",
                 .jcast(from,"mesquite/lib/Tree"));
   edge.matrix <- .jcall(mAPE,"[[I","getEdgeMatrix");
   phylo <- list(edge=matrix(
@@ -214,7 +217,7 @@ as.phylo.jobjRef <- function(from) {
 ##           mRoot <- .jcall(from,"I","getRoot");
 ##           numNodes <- .jcall(from,"I","numberOfNodesInClade",mRoot);
 ##           numTerminals <- .jcall(from,"I","numberOfTerminalsInClade",mRoot);
-##           mAPE <- .jnew("mesquite/rmLink/common/APETree",
+##           mAPE <- .jnew("mesquite/R/common/APETree",
 ##                         .jcast(from,"mesquite/lib/Tree"));
 ##           edge.matrix <- .jcall(trApe,"[[I","getEdgeMatrix");
 ##           phylo4(edge=matrix(
