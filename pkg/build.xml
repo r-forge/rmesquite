@@ -127,10 +127,13 @@
   </target>
 
   <target name="clean" depends="init" description="Clean all build products.">
-    <delete>
+    <delete verbose="true" includeemptydirs="true" failonerror="false">
       <fileset dir="${build.classes.dir}"/>
     </delete>
-    <delete file="${file.jar}"/>
+    <delete verbose="true" file="${file.jar}" failonerror="false"/>
+    <delete verbose="true" includeemptydirs="true" failonerror="false">
+      <fileset dir="${build.dir}"/>
+    </delete>
   </target>
 
   <target name="deploy" depends="jar" 
