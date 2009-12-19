@@ -22,49 +22,28 @@
 
   <!-- project info -->
   <property name="project" value="Mesquite.R"/>
-  <property name="version.number" value="0.0.3"/>
+  <property name="version.number" value="0.1.0"/>
 
   <!-- distribution -->
   <property name="dist.name" value="${project}-${version.number}"/>
 
   <!-- directories -->
-  <property name="dir.build" value="build"/>
-  <property name="dir.build.classes" value="${dir.build}/classes"/>
-  <property name="dir.src" value="Source"/>
-  <property name="dir.lib" value="lib"/>
-  <property name="dir.doc" value="docs"/>
-  <property name="dir.apidoc" value="${dir.doc}/api"/>
-  <property name="dir.test" value="test"/>
+  <property name="build.dir" value="src/java/build"/>
+  <property name="build.classes.dir" value="${build.dir}/classes"/>
+  <property name="src.dir" value="src/java/src"/>
+  <property name="lib.dir" value="src/java/lib"/>
+  <property name="doc.dir" value="inst/java/docs"/>
+  <property name="test.dir" value="src/java/test"/>
 
   <!-- files -->
-  <property name="file.jar" value="${dir.build}/${dist.name}.jar"/>
+  <property name="file.jar" value="${build.dir}/${dist.name}.jar"/>
 
   <!-- deployment -->
-  <property name="dir.deploy" value="deploy"/>
+  <property name="deploy.dir" value="${basedir}/inst/java"/>
   <property name="R.package" value="RMesquite"/>
 
-  <!-- paths and sets of files -->
-  <patternset id="file.list.RtoM">
-    <include name="mesquite/R/lib/**/*"/>
-  </patternset>
-  <patternset id="file.list.MtoR">
-    <include name="mesquite/R/lib/**/*"/>
-  </patternset>
-
-  <!-- classes: -->
-  <fileset dir="${dir.build.classes}" id="classfiles.RtoM">
-    <patternset refid="file.list.RtoM"/>
-    <filename name="**/*.class"/>
-  </fileset>
-  <fileset dir="${dir.build.classes}" id="classfiles.MtoR">
-    <patternset refid="file.list.MtoR"/>
-    <filename name="**/*.class"/>
-  </fileset>
-
   <!-- additional elements for classpath -->
-  <path id="my.classpath">
-    <pathelement path="${mesquite.home}"/>
-  </path>
+  <path id="my.classpath"/>
 
   <!--
 
@@ -81,16 +60,37 @@
     <echo message="Started build script for Mesquite.R ${TODAY.NOW}"/>
   </target>
 
+  <!-- If the mesquite home directory wasn't set in the
+       build.properties, we can try to figure it out from the Mesquite
+       logs. This requires that the user has run Mesquite as least once. 
+    -->
+  <target name="find.mesquite" unless="mesquite.home">
+    <xmlproperty
+        file="${user.home}/Mesquite_Support_Files/Mesquite_Prefs/Mesquite.xml"
+        />
+    <!-- first try the GUI version -->
+    <property name="mesquite.home" 
+              value="${mesquite.MesquiteTrunk.mesquitePath}"/>
+    <!-- if that was unsuccessful, try the path for the headless version -->
+    <property name="mesquite.home" 
+              value="${mesquite.MesquiteTrunk.mesquiteHeadlessPath}"/>
+    <echo message="determined Mesquite home as ${mesquite.home}"/>
+  </target>
+
   <!-- compile the source files -->
-  <target name="compile" depends="init" description="Compile sources.">
-    <mkdir dir="${dir.build}"/>
-    <mkdir dir="${dir.build.classes}"/>
-    <javac srcdir="${dir.src}"
-	   destdir="${dir.build.classes}"
+  <target name="compile" depends="init,find.mesquite" 
+          description="Compile Java sources.">
+    <mkdir dir="${build.dir}"/>
+    <mkdir dir="${build.classes.dir}"/>
+    <javac srcdir="${src.dir}"
+	   destdir="${build.classes.dir}"
 	   includeAntRuntime="false" debug="true" deprecation="true"
 	   >
-      <classpath><path refid="my.classpath"/></classpath>
-      <patternset refid="file.list.RtoM"/>
+      <classpath>
+        <path refid="my.classpath"/>
+        <pathelement path="${mesquite.home}"/>
+        <pathelement path="${lib.dir}"/>
+      </classpath>
       <filename name="**/*.java"/>
     </javac>
   </target>
@@ -99,10 +99,9 @@
   <target name="jar" depends="compile" description="Create jar file.">
     <!-- jar it up -->
     <jar jarfile="${file.jar}"
-	 basedir="${dir.build.classes}" compress="true"
+	 basedir="${build.classes.dir}" compress="true"
 	 update="false">
-      <exclude name="**/*"/>
-      <fileset refid="classfiles.RtoM"/>
+      <filename name="**/*.class"/>
       <manifest>
         <attribute name="Built-By" value="${user.name}"/>
       </manifest>
@@ -114,23 +113,22 @@
   </target>
 
   <target name="javadoc" depends="init" description="Generate Javadoc.">
-    <mkdir dir="${dir.apidoc}"/>
-    <javadoc destdir="${dir.apidoc}"
+    <mkdir dir="${doc.dir}"/>
+    <javadoc destdir="${doc.dir}"
              windowtitle="${project} Javadoc Documentation"
              doctitle="${project} Javadoc Documentation"
              package="true" version="true" author="true">
       <classpath>
         <path refid="my.classpath"/>
-        <fileset dir="${dir.build}"><patternset refid="lib.jars"/></fileset>
+        <fileset dir="${build.dir}"><patternset refid="lib.jars"/></fileset>
       </classpath>
-      <fileset refid="srcfiles"/>
       <link href="http://java.sun.com/j2se/1.4.2/docs/api/"/>
     </javadoc>
   </target>
 
   <target name="clean" depends="init" description="Clean all build products.">
     <delete>
-      <fileset dir="${dir.build.classes}"/>
+      <fileset dir="${build.classes.dir}"/>
     </delete>
     <delete file="${file.jar}"/>
   </target>
@@ -139,6 +137,11 @@
           description="Deploy jar file to destination">
     <copy file="${file.jar}" todir="${deploy.dir}" 
           flatten="true" preservelastmodified="true" verbose="true"/>
+  </target>
+
+  <target name="redeploy" depends="clean,deploy" 
+          description="Rebuild, then deploy jar file to destination">
+    <echo message="Redeploy done."/>
   </target>
 
   <target name="Rinstall" depends="deploy" 

@@ -10,12 +10,21 @@
 # Where is Mesquite installed? This is the root directory of the
 # Mesquite installation.
 #
-mesquite.home = /Applications/Mesquite_Folder
+# This will now be auto-determined from the Mesquite logs in your home
+# directory if you have launched the desired version of Mesquite at
+# least once.
+#
+#mesquite.home = /Applications/Mesquite_Folder
 # Windows?
-# mesquite.home = C\:\\Program Files\\Mesquite_Folder
+#mesquite.home = C\:\\Program Files\\Mesquite_Folder
 
 #
 # Where should the jar be copied for deployment?
 #
-deploy.dir = /path/to/where/to/deploy/jarFile
-# deploy.dir = /Users/lapp/Devel/phyloc/trunk/Rpkgs/RMesquite/inst/java
+#
+# This should normally not need to be set if the deploy directory is
+# the standard inst/java directory of the package. Otherwise uncomment
+# and override it here.
+#
+#deploy.dir = /path/to/where/to/deploy/jarFile
+
