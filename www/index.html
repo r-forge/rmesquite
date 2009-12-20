@@ -30,7 +30,7 @@
 <h3 class="style4">Installation</h3>
 <p class="style4">To use RMesquite you must:</p>
 <ul class="style4">
-  <li>In R, install <strong>RMesquite</strong> from CRAN as you normally install R packages. RMesquite depends on the packages rJava and ape.</li>
+  <li>In R, install <strong>RMesquite</strong>. Until the package appears on CRAN (at which point you can install from CRAN as you normally would install R packages), you can install from R-Forge, using <strong><code>install.packages("RMesquite", repos="http://R-Forge.R-project.org")</code></strong> from within R. RMesquite depends on the packages rJava and ape.</li>
   <li>Install Mesquite 2.72 or later (<a href="http://mesquiteproject.org">http://mesquiteproject.org</a>)</li>
 </ul>
 <h3 class="style4">Starting Mesquite</h3>
@@ -64,7 +64,11 @@
 <pre class="style4">&gt; mesquiteMatrix &lt;- getMatrixInWindow()</pre>
 <p class="style4">This is obtained as a java object, but you can convert it into a normal R matrix using <em>as.matrix</em>.</p>
 <h3 class="style4">Source Code, Downloads, Mailing lists</h3>
-<p class="style4">Source code of RMesquite is available at its <a href="http://r-forge.r-project.org/scm/?group_id=213">R-Forge subversion repository</a>, where you can find the URLs to checkout the code in svn. The <a href="http://r-forge.r-project.org/projects/rmesquite/">R-Forge project page</a> has also links to nightly svn snapshots, and users and developers mailing lists.</p>
+<ul class="style4">
+  <li>Source code of RMesquite is available at its <a href="http://r-forge.r-project.org/scm/?group_id=213">R-Forge subversion repository</a>, where you can find the URLs to checkout the code in svn.<br/>Note that to rebuild the Java sources, Mesquite needs to be installed and found by the Java compiler. If you have launched Mesquite before, it's location should be found automatically. Otherwise copy build.properties.example to build.properties, and specify the path there.</li>
+  <li>The <a href="http://r-forge.r-project.org/projects/rmesquite/">R-Forge project page</a> has also links to nightly svn snapshots, and users and developers mailing lists.</li>
+  <li>Daily built packages (source, Windows binary, and Mac OSX binary), as well as R CMD check logs, can be downloaded from the <a href="http://r-forge.r-project.org/R/?group_id=213">R Packages page on R-Forge</a>.
+</ul>
 <h3 class="style4">Citation</h3>
 <p class="style4">If you make use of Mesquite for the analysis of results, such as to estimate ancestral states, then you should cite the functions in Mesquite. Thus, we suggest a citation like this: &quot;The &lt;insert analysis name here&gt; analysis was performed by Mesquite 2.72 (Maddison &amp; Maddison, 2009), run via the RMesquite package (Lapp &amp; Maddison, 2009) from R version 2.10.0.&quot; </p>
 <p class="style4">Lapp, H. &amp; Maddison, W.P. 2009. RMesquite, an R package for transparent access to Mesquite functions. http://rmesquite.r-forge.r-project.org</p>
