@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+
+<!--
+
+    This is the front-end ant build file for the Mesquite.R Java package for 
+    R<->Mesquite interaction. It simply calls the real ant build file, which
+    is in the src/java directory, where the Java sources are.
+
+-->
+
+<project name="Mesquite.R" default="build">
+
+  <!--
+
+      ############################################################
+      Properties section
+      ############################################################
+
+    -->
+
+  <property name="java.dir" location="src/java"/>
+
+  <!--
+
+      ############################################################
+      Targets section
+      ############################################################
+
+    -->
+  
+  <target name="redeploy" 
+          description="rebuild the java library and copy to inst/java">
+    <ant antfile="${java.dir}/build.xml" target="redeploy"/>
+  </target>
+
+  <target name="clean" 
+          description="remove classes and build directories before packaging">
+    <ant antfile="${java.dir}/build.xml" target="clean"/>
+  </target>
+
+  <target name="build" depends="redeploy,clean" 
+          description="Build the R package, recompiling the Java sources">
+    <exec executable="R" dir="${basedir}/..">
+      <arg value="CMD"/>
+      <arg value="build"/>
+      <arg value="pkg"/>
+    </exec>
+  </target>
+
+</project>
