@@ -30,7 +30,7 @@
   <!-- directories -->
   <property name="build.dir" value="src/java/build"/>
   <property name="build.classes.dir" value="${build.dir}/classes"/>
-  <property name="src.dir" value="src/java/src"/>
+  <property name="src.dir" value="src/java/main"/>
   <property name="lib.dir" value="src/java/lib"/>
   <property name="doc.dir" value="inst/java/docs"/>
   <property name="test.dir" value="src/java/test"/>
@@ -149,7 +149,7 @@
 
   <target name="Rinstall" depends="deploy" 
           description="Install the R package">
-    <exec executable="R" dir="${deploy.dir}/../../..">
+    <exec executable="R" dir="${basedir}/..">
       <arg value="CMD"/>
       <arg value="INSTALL"/>
       <arg value="${R.package}"/>
