@@ -28,18 +28,19 @@
   <property name="dist.name" value="${project}-${version.number}"/>
 
   <!-- directories -->
-  <property name="build.dir" value="src/java/build"/>
-  <property name="build.classes.dir" value="${build.dir}/classes"/>
-  <property name="src.dir" value="src/java/main"/>
-  <property name="lib.dir" value="src/java/lib"/>
-  <property name="doc.dir" value="inst/java/docs"/>
-  <property name="test.dir" value="src/java/test"/>
+  <property name="build.dir" location="build"/>
+  <property name="build.classes.dir" location="${build.dir}/classes"/>
+  <property name="src.dir" location="main"/>
+  <property name="lib.dir" location="lib"/>
+  <property name="doc.dir" location="docs"/>
+  <property name="test.dir" location="test"/>
+  <property name="pkg.dir" location="${basedir}/../.."/>
 
   <!-- files -->
   <property name="file.jar" value="${build.dir}/${dist.name}.jar"/>
 
   <!-- deployment -->
-  <property name="deploy.dir" value="${basedir}/inst/java"/>
+  <property name="deploy.dir" value="${pkg.dir}/inst/java"/>
   <property name="R.package" value="RMesquite"/>
 
   <!-- additional elements for classpath -->
@@ -149,7 +150,7 @@
 
   <target name="Rinstall" depends="deploy" 
           description="Install the R package">
-    <exec executable="R" dir="${basedir}/..">
+    <exec executable="R" dir="${pkg.dir}">
       <arg value="CMD"/>
       <arg value="INSTALL"/>
       <arg value="${R.package}"/>

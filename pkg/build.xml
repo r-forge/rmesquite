@@ -30,12 +30,12 @@
   
   <target name="redeploy" 
           description="rebuild the java library and copy to inst/java">
-    <ant antfile="${java.dir}/build.xml" target="redeploy"/>
+    <ant antfile="${java.dir}/build.xml" dir="${java.dir}" target="redeploy"/>
   </target>
 
   <target name="clean" 
           description="remove classes and build directories before packaging">
-    <ant antfile="${java.dir}/build.xml" target="clean"/>
+    <ant antfile="${java.dir}/build.xml" dir="${java.dir}" target="clean"/>
   </target>
 
   <target name="build" depends="redeploy,clean" 
