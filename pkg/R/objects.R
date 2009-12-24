@@ -169,29 +169,29 @@ from.CharacterMatrix <- function(obj,
   ans  
 }
 
-as.matrix.jobjRef <- function(from) {
-  if (class(from) != "jobjRef") {
-    stop("need to pass java object reference, not ",class(from));
+as.matrix.jobjRef <- function(x, ...) {
+  if (class(x) != "jobjRef") {
+    stop("need to pass java object reference, not ",class(x));
   }
-  cl.name <- .jclassOf(from,package.path=FALSE);
+  cl.name <- .jclassOf(x,package.path=FALSE);
   if (cl.name == "RNumericMatrix") {
-    return(from.RNumericMatrix(from));
+    return(from.RNumericMatrix(x));
   }
   if (cl.name %in% c("CategoricalData","ContinuousData","DNAData","MeristicData")) {
-    return(from.CharacterMatrix(from,class.name=cl.name));
+    return(from.CharacterMatrix(x,class.name=cl.name));
   }
-  stop("currently not supported for objects of class ",.jclassOf(from));
+  stop("currently not supported for objects of class ",.jclassOf(x));
 }
 
-as.phylo.jobjRef <- function(from) {
-  if (.jclassOf(from,package.path=FALSE) != "MesquiteTree") {
-    stop("can't coerce Java object of type ",.jclassOf(from)," to type phylo");
+as.phylo.jobjRef <- function(x, ...) {
+  if (.jclassOf(x,package.path=FALSE) != "MesquiteTree") {
+    stop("can't coerce Java object of type ",.jclassOf(x)," to type phylo");
   }
-  mRoot <- .jcall(from,"I","getRoot");
-  numNodes <- .jcall(from,"I","numberOfNodesInClade",mRoot);
-  numTerminals <- .jcall(from,"I","numberOfTerminalsInClade",mRoot);
+  mRoot <- .jcall(x,"I","getRoot");
+  numNodes <- .jcall(x,"I","numberOfNodesInClade",mRoot);
+  numTerminals <- .jcall(x,"I","numberOfTerminalsInClade",mRoot);
   mAPE <- .jnew("mesquite/R/common/APETree",
-                .jcast(from,"mesquite/lib/Tree"));
+                .jcast(x,"mesquite/lib/Tree"));
   edge.matrix <- .jcall(mAPE,"[[I","getEdgeMatrix");
   phylo <- list(edge=matrix(
                   c(.jevalArray(edge.matrix[[1]]),
