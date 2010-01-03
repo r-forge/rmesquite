@@ -1,4 +1,4 @@
-/* Mesquite.R source code.  Copyright 2009 W. Maddison, H. Lapp & D. Maddison. 
+/* Mesquite.R source code.  Copyright 2010 W. Maddison, H. Lapp & D. Maddison. 
 December 2009.
 
 Mesquite.R is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY.
