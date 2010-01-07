@@ -34,7 +34,7 @@
   <property name="lib.dir" location="lib"/>
   <property name="doc.dir" location="docs"/>
   <property name="test.dir" location="test"/>
-  <property name="pkg.dir" location="${basedir}/../.."/>
+  <property name="pkg.dir" location="${basedir}/.."/>
 
   <!-- files -->
   <property name="file.jar" value="${build.dir}/${dist.name}.jar"/>
