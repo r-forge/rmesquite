@@ -25,7 +25,8 @@ In R:
 * Method to convert state matrix from Java to R
 
 
-
+To build RMesquite in R
+=======================
 To build, cd into workspace directory.  Then:  sudo R CMD INSTALL RMesquite
 
 
